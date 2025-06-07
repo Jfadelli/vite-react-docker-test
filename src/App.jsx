@@ -1,42 +1,64 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import React from 'react'
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import Login from "./components/Login";
 
-
-function App() {
-  const [count, setCount] = useState(0)
+function Home() {
+  const navigate = useNavigate();
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-      </div>
-      <div className="card">
+    <div className="min-h-screen w-full flex items-center justify-center bg-gray-600">
+      <div className="w-full max-w-screen-md text-center px-4">
+        <h1 className="text-4xl font-bold mb-6">Welcome</h1>
         <button
-          onClick={() => console.log('hello')}
+          onClick={() => navigate("/login")}
+          className="px-6 py-3 bg-blue-600 text-white text-lg rounded-md hover:bg-blue-700"
         >
-          Login
+          Log In
         </button>
-
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more!!!
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+function LoginModalWrapper() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.key === "Escape") {
+        navigate("/");
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [navigate]);
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="relative bg-gray-600 p-8 rounded-md shadow-lg w-full max-w-md">
+        <button
+          onClick={() => navigate("/")}
+          className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 text-2xl bg-gray-900"
+        >
+          ×
+        </button>
+        <Login />
+      </div>
+    </div>
+  );
+}
+
+export default function App() {
+  const location = useLocation();
+  const isLoginModal = location.pathname === "/login";
+
+  return (
+    <div className="w-screen min-h-screen bg-gray-700 overflow-x-hidden">
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Home />} />
+      </Routes>
+      {isLoginModal && <LoginModalWrapper />}
+    </div>
+  );
+}
