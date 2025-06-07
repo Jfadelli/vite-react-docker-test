@@ -5,7 +5,7 @@ FROM node:18-slim
 WORKDIR /workspace
 
 # Set up a non-root user for VS Code compatibility
-RUN useradd -m node && chown -R node /workspace
+RUN id -u node &>/dev/null || useradd -m node && chown -R node /workspace
 
 # Use the node user
 USER node
